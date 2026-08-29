@@ -1,3 +1,4 @@
+from random import randint
 import pygame
 
 pygame.init()
@@ -7,17 +8,15 @@ screen_clock = pygame.time.Clock()
 running = True
 
 # Paddle
-paddle_x = 100
-paddle_y = 200
-paddle_width = 20
-paddle_height = 100
+#x, y, width, height
+paddle = pygame.Rect(100, 200, 20, 100)
 
 # Ball
-ball_x = 400
-ball_y = 300
-ball_size = 15
-ball_vel_x = 5
-ball_vel_y = 5
+# x, y, ball size, ball size
+ball = pygame.Rect(400, 300, 15, 15)
+
+ball_vel_x = randint(-5, 5)
+ball_vel_y = randint(-5, 5)
 
 while running:
     for evt in pygame.event.get():
@@ -28,45 +27,34 @@ while running:
 
     # Drawing section
 
-    # Paddle 1
-    pygame.draw.rect(
-        # where
-        screen,
-        # R G B
-        (255, 255, 255),
-        # x, y, width, height
-        (paddle_x, paddle_y, paddle_width, paddle_height)
-    )
+    # Paddle 1      # Where  # R    G    B    # thing
+    pygame.draw.rect(screen, (255, 255, 255), paddle)
 
     # Ball
-    pygame.draw.rect(
-        # where
-        screen,
-        # R G B
-        (255, 255, 255),
-        # x, y, width, height
-        (ball_x, ball_y, ball_size, ball_size)
-    )
+    pygame.draw.rect(screen, (255, 255, 255), ball)
 
-    ball_x += ball_vel_x
-    ball_y += ball_vel_y
-
+    ball.x += ball_vel_x
+    ball.y += ball_vel_y
 
     # Controls
     keys = pygame.key.get_pressed()
-    if keys[pygame.K_w]: paddle_y -= 6.5
-    if keys[pygame.K_s]: paddle_y += 6.5
+    if keys[pygame.K_w]: paddle.y -= 6
+    if keys[pygame.K_s]: paddle.y += 6
 
-    if paddle_y < 0: paddle_y = 0
-    if paddle_y > 600 - paddle_height: paddle_y = 600 - paddle_height
+    if paddle.y < 0: paddle.y = 0
+    if paddle.y > 600 - paddle.height: paddle_y = 600 - paddle.height
 
     # Borders
-    if ball_y + ball_size >= 600: ball_vel_y *= -1
-    if ball_y + ball_size <= 0: ball_vel_y *= -1
+    if ball.y + ball.height >= 600: ball_vel_y *= -1
+    if ball.y + ball.height <= 0: ball_vel_y *= -1
 
-    if ball_x + ball_size >= 800: ball_vel_x *= -1
-    if ball_x + ball_size <= 0: ball_vel_x *= -1
+    if ball.x + ball.width >= 800: ball_vel_x *= -1
+    if ball.x + ball.width <= 0: ball_vel_x *= -1
 
+    if paddle.top < 0: paddle.top = 0
+    if paddle.bottom > 600: paddle.bottom = 600
 
     pygame.display.flip()
     screen_clock.tick(60)
+
+    # I am losing my mind
