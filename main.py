@@ -2,6 +2,7 @@ import pygame
 
 pygame.init()
 screen = pygame.display.set_mode((800, 600))
+screen_clock = pygame.time.Clock()
 
 running = True
 
@@ -53,16 +54,19 @@ while running:
 
     # Controls
     keys = pygame.key.get_pressed()
-    if keys[pygame.K_w]: paddle_y -= .35
-    if keys[pygame.K_s]: paddle_y += .35
+    if keys[pygame.K_w]: paddle_y -= 6.5
+    if keys[pygame.K_s]: paddle_y += 6.5
 
     if paddle_y < 0: paddle_y = 0
     if paddle_y > 600 - paddle_height: paddle_y = 600 - paddle_height
 
     # Borders
     if ball_y + ball_size >= 600: ball_vel_y *= -1
-    if ball_y <= 0: ball_vel_y *= 1
+    if ball_y + ball_size <= 0: ball_vel_y *= -1
+
     if ball_x + ball_size >= 800: ball_vel_x *= -1
-    
+    if ball_x + ball_size <= 0: ball_vel_x *= -1
+
 
     pygame.display.flip()
+    screen_clock.tick(60)
