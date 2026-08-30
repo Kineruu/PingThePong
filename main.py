@@ -83,12 +83,45 @@ while running:
     # Controls
     paddle_speed = 6
 
-    keys = pygame.key.get_pressed()
-    if keys[pygame.K_w]: paddle.y -= paddle_speed
-    if keys[pygame.K_s]: paddle.y += paddle_speed
+    # screen = pygame.display.set_mode((800, 600))
 
-    if keys[pygame.K_i]: paddle2.y -= paddle_speed
-    if keys[pygame.K_k]: paddle2.y += paddle_speed
+    keys = pygame.key.get_pressed()
+    if keys[pygame.K_w]:
+        paddle.y -= paddle_speed
+
+    if keys[pygame.K_s]:
+        paddle.y += paddle_speed
+
+    if keys[pygame.K_a]:
+        paddle.x -= paddle_speed
+
+    if keys[pygame.K_d]:
+        paddle.x += paddle_speed
+
+    if paddle.right >= 300:
+        paddle.right = 300
+
+    if paddle.left <= 0:
+        paddle.left = 0
+
+    # p2 movement
+    if keys[pygame.K_UP]:
+        paddle2.y -= paddle_speed
+
+    if keys[pygame.K_DOWN]:
+        paddle2.y += paddle_speed
+
+    if keys[pygame.K_LEFT]:
+        paddle2.x -= paddle_speed
+
+    if keys[pygame.K_RIGHT]:
+        paddle2.x += paddle_speed
+
+    if paddle2.left <= 500:
+        paddle2.left = 500
+
+    if paddle2.right >= 800:
+        paddle2.right = 800
 
     if paddle.y < 0: paddle.y = 0
     if paddle.y > 600 - paddle.height: paddle.y = 600 - paddle.height
