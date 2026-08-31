@@ -1,18 +1,19 @@
 from random import randint
 import pygame
-import math #math in python why
 
-#dx = horizonal movement
-#dy = vertical movement
-
+# we make the pygame thing work
 pygame.init()
+# screen resolution
 screen = pygame.display.set_mode((800, 600))
-screen_clock = pygame.time.Clock()
+screen_clock = pygame.time.Clock() #clock is used for fps apparently
 
+# most basic counting system
 p1points = 0
 p2points = 0
 
+# if it works or not
 running = True
+
 waiting = False
 wait_start = 0
 
@@ -28,8 +29,11 @@ paddle2 = pygame.Rect(700, 200, 20, 100)
 # x, y, ball size, ball size
 ball = pygame.Rect(400, 300, 15, 15)
 
+# font for text
 font = pygame.font.Font(None, 30)
 
+
+# y'all don't look at this this isn't good practice but if it works it works
 left_or_right = randint(0, 1)
 
 if left_or_right == 0:
@@ -46,6 +50,8 @@ if up_or_down == 0:
 if up_or_down == 1:
     ball_vel_y = -3
 
+# someone please count the amount of "if"s and "else"s in this file
+
 def reset_ball():
     ball.center = (400, 300)
     if randint(0, 1) == 0:
@@ -61,7 +67,6 @@ def reset_ball():
     return ball_vel_x, ball_vel_y
 
 def ball_velocity(ball, paddle, direction):
-
     hit_pos = ball.centery - paddle.centery
 
     ball_vel_y = hit_pos / 10
@@ -147,6 +152,8 @@ while running:
     if ball.y + ball.height >= 600: ball_vel_y *= -1
     if ball.y <= 0: ball_vel_y *= -1
 
+    # Crazy border checking
+
     if ball.right <= 0:
         p2points += 1
         ball_vel_x, ball_vel_y = reset_ball()
@@ -168,7 +175,6 @@ while running:
     if not waiting:
         ball.x += ball_vel_x
         ball.y += ball_vel_y
-
 
 
     if ball.colliderect(paddle):
