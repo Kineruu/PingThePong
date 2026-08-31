@@ -1,6 +1,9 @@
 from random import randint
 import pygame
-import time
+import math #math in python why
+
+#dx = horizonal movement
+#dy = vertical movement
 
 pygame.init()
 screen = pygame.display.set_mode((800, 600))
@@ -57,6 +60,17 @@ def reset_ball():
 
     return ball_vel_x, ball_vel_y
 
+def ball_velocity(ball, paddle, direction):
+
+    hit_pos = ball.centery - paddle.centery
+
+    ball_vel_y = hit_pos / 10
+    ball_speed = 5
+
+    ball_vel_x = direction * ball_speed
+
+    return ball_vel_x, ball_vel_y
+
 while running:
     for evt in pygame.event.get():
         if evt.type == pygame.QUIT:
@@ -98,8 +112,8 @@ while running:
     if keys[pygame.K_d]:
         paddle.x += paddle_speed
 
-    if paddle.right >= 300:
-        paddle.right = 300
+    if paddle.right >= 275:
+        paddle.right = 275
 
     if paddle.left <= 0:
         paddle.left = 0
@@ -117,14 +131,17 @@ while running:
     if keys[pygame.K_RIGHT]:
         paddle2.x += paddle_speed
 
-    if paddle2.left <= 500:
-        paddle2.left = 500
+    if paddle2.left <= 525:
+        paddle2.left = 525
 
     if paddle2.right >= 800:
         paddle2.right = 800
 
     if paddle.y < 0: paddle.y = 0
     if paddle.y > 600 - paddle.height: paddle.y = 600 - paddle.height
+
+    if paddle2.y < 0: paddle2.y = 0
+    if paddle2.y > 600 - paddle2.height: paddle2.y = 600 - paddle2.height
 
     # Borders
     if ball.y + ball.height >= 600: ball_vel_y *= -1
@@ -153,37 +170,30 @@ while running:
         ball.y += ball_vel_y
 
 
-    if paddle.top < 0: paddle.top = 0
-    if paddle.bottom > 600: paddle.bottom = 600
 
-    if paddle2.top < 0: paddle2.top = 0
-    if paddle2.bottom > 600: paddle2.bottom = 600
+    if ball.colliderect(paddle):
+        if ball.centerx < paddle.centerx:
+            ball.right = paddle.left
+            ball_vel_x = -abs(ball_vel_x)
 
-    if ball.colliderect(paddle): 
-        ball.left = paddle.right
-        ball_vel_x *= -1
+        else:
+            ball.left = paddle.right
+            ball_vel_x = abs(ball_vel_x)
 
-        hit_position = ball.centery - paddle.centery
-        ball_vel_y = hit_position // 10
+        hit_pos = ball.centery - paddle.centery
+        ball_vel_y = hit_pos / 10
 
-        if ball_vel_y == 0:
-            ball_vel_y = randint(-2, 2)
+    if ball.colliderect(paddle2):
+        if ball.centerx < paddle2.centerx:
+            ball.right = paddle2.left
+            ball_vel_x = -abs(ball_vel_x)
 
-            if ball_vel_y == 0:
-                ball_vel_y = 1
+        else:
+            ball.left = paddle2.right
+            ball_vel_x = abs(ball_vel_x)
 
-    if ball.colliderect(paddle2): 
-        ball.right = paddle2.left
-        ball_vel_x *= -1
-
-        hit_position = ball.centery - paddle2.centery
-        ball_vel_y = hit_position // 10
-
-        if ball_vel_y == 0:
-            ball_vel_y = randint(-2, 2)
-
-            if ball_vel_y == 0:
-                ball_vel_y = 1
+        hit_pos = ball.centery - paddle2.centery
+        ball_vel_y = hit_pos / 10
 
     pygame.display.flip()
     screen_clock.tick(60)
