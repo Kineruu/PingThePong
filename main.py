@@ -18,6 +18,15 @@ running = True
 waiting = False
 wait_start = 0
 
+# gamemode
+# as in, player vs player OR player vs bot
+gamemode = 0
+# 0 - player vs player
+# 1 - player vs bot
+# i doubt ill make bot vs bot
+# for now itll be just using input() function for gamemode
+# i will maybe convert it into esp32 some screen?
+
 # Paddle 1
 #x, y, width, height
 paddle = pygame.Rect(100, 200, 20, 100)
@@ -33,6 +42,9 @@ ball = pygame.Rect(400, 300, 15, 15)
 # font for text
 font = pygame.font.Font(None, 30)
 
+
+#todo:
+# fix this thing below this comment
 
 # y'all don't look at this this isn't good practice but if it works it works
 left_or_right = randint(0, 1)
@@ -104,6 +116,8 @@ while running:
     paddle_speed = 6
 
     # screen = pygame.display.set_mode((800, 600))
+
+    # maybe reduce the amount of "if"s used here
 
     keys = pygame.key.get_pressed()
     if keys[pygame.K_w]:
@@ -177,7 +191,6 @@ while running:
         ball.x += ball_vel_x
         ball.y += ball_vel_y
 
-
     if ball.colliderect(paddle):
         if ball.centerx < paddle.centerx:
             ball.right = paddle.left
@@ -206,3 +219,4 @@ while running:
     screen_clock.tick(60)
 
     # I am losing my mind
+    # yeah

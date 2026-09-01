@@ -7,6 +7,8 @@ import time
 # make somewhat reasonable breadboard prototype
 # make it either player vs bot or player vs player
 # maybe document the entire thing like what i did and what parts i used
+# add button support for gamemode (line 23, main.py)
+# ^ two or three buttons, or maybe a 3-mode switch if i order one
 
 # Left paddle
 L_B1 = Pin(1, Pin.IN, Pin.PULL_UP)
