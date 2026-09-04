@@ -17,35 +17,10 @@ waiting = False
 wait_start = 0
 
 # gamemode
-# as in, player vs player OR player vs bot
 gamemode = 0
 # 1 - player vs player
 # 2 - player vs bot
-# 3 - i doubt ill make bot vs bot
-# for now itll be just using input() function for gamemode
-# i will maybe convert it into esp32 some screen?
-
-def get_gamemode(default=1):
-    print("""
-[1]: Player vs Player
-[2]: Player vs Bot
-[3]: Bot vs Bot
-""")
-    ask_gamemode = input("GAMEMODE: ")
-
-    if ask_gamemode == "": 
-        ask_gamemode = default
-    try:
-        if int(ask_gamemode) == 1: print()
-        elif int(ask_gamemode) == 2: print()
-        elif int(ask_gamemode) == 3: print()
-        else: print("Wrong, default is 1 - player vs player")
-    except ValueError:
-        print("Really? ")
-
-    return ask_gamemode
-
-gamemode = int(get_gamemode())
+# 3 - bot vs bot
 
 # Paddle 1
 #x, y, width, height
@@ -61,7 +36,7 @@ ball = pygame.Rect(400, 300, 15, 15)
 
 # font for text
 font = pygame.font.Font(None, 30)
-
+menu_font = pygame.font.Font(None, 50)
 
 velocity_values = [-3, 3]
 
@@ -93,120 +68,133 @@ while running:
     for evt in pygame.event.get():
         if evt.type == pygame.QUIT:
             running = False
+
+        if gamemode == 0 and evt.type == pygame.KEYDOWN:
+            if evt.key == pygame.K_1: gamemode = 1
+            elif evt.key == pygame.K_2: gamemode = 2
+            elif evt.key == pygame.K_3: gamemode = 3
+
     screen.fill((0, 0, 0))
 
-    # Drawing section
+    if gamemode == 0:
 
-    # Paddle 1      # Where  # R    G    B    # thing
-    pygame.draw.rect(screen, (255, 255, 255), paddle)
+        title = menu_font.render("PONG", True, (255, 255, 255))
+        pvp = font.render("1 - Player vs Player", True, (255, 255, 255))
+        pvai = font.render("2 - Player vs AI", True, (255, 255, 255))
+        aivai = font.render("3 - AI vs AI", True, (255, 255, 255))
 
-    # Paddle 2
-    pygame.draw.rect(screen, (255, 255, 255), paddle2)
-
-    # Ball
-    pygame.draw.rect(screen, (255, 255, 255), ball)
-
-    p1 = font.render(f"P1: {p1points}", True, (255, 255, 255))
-    p2 = font.render(f"P2: {p2points}", True, (255, 255, 255))
-
-    screen.blit(p1, (5, 10))
-    screen.blit(p2, (700, 10))
-
-    # Controls
-    paddle_speed = 6
-
-    # screen = pygame.display.set_mode((800, 600))
-
-    # maybe reduce the amount of "if"s used here
-
-    keys = pygame.key.get_pressed()
-    if keys[pygame.K_w]:
-        paddle.y -= paddle_speed
-
-    if keys[pygame.K_s]:
-        paddle.y += paddle_speed
-
-    if keys[pygame.K_a]:
-        paddle.x -= paddle_speed
-
-    if keys[pygame.K_d]:
-        paddle.x += paddle_speed
-
-    paddle.clamp_ip(pygame.Rect(0, 0, 275, 600))
-
-    if gamemode != 2:
-        # p2 movement
-        if keys[pygame.K_UP]:
-            paddle2.y -= paddle_speed
-
-        if keys[pygame.K_DOWN]:
-            paddle2.y += paddle_speed
-
-        if keys[pygame.K_LEFT]:
-            paddle2.x -= paddle_speed
-
-        if keys[pygame.K_RIGHT]:
-            paddle2.x += paddle_speed
+        screen.blit(title, (350, 100))
+        screen.blit(pvp, (300, 200))
+        screen.blit(pvai, (300, 250))
+        screen.blit(aivai, (300, 300))
     else:
-        if ball.centery < paddle2.centery:
-            paddle2.y -= paddle_speed
 
-        if ball.centery > paddle2.centery:
-            paddle2.y += paddle_speed
+        # Drawing section
 
-    paddle2.clamp_ip(pygame.Rect(525, 0, 275, 600))
+        # Paddle 1      # Where  # R    G    B    # thing
+        pygame.draw.rect(screen, (255, 255, 255), paddle)
 
-    # Borders
-    if ball.top <= 0 or ball.bottom >= 600:
-        ball_vel_y *= -1
+        # Paddle 2
+        pygame.draw.rect(screen, (255, 255, 255), paddle2)
 
-    # Crazy border checking
+        # Ball
+        pygame.draw.rect(screen, (255, 255, 255), ball)
 
-    if ball.right <= 0:
-        p2points += 1
-        ball_vel_x, ball_vel_y = reset_ball()
+        p1 = font.render(f"P1: {p1points}", True, (255, 255, 255))
+        p2 = font.render(f"P2: {p2points}", True, (255, 255, 255))
 
-        waiting = True
-        wait_start = pygame.time.get_ticks()
+        screen.blit(p1, (5, 10))
+        screen.blit(p2, (700, 10))
 
-    if ball.left >= 800:
-        p1points += 1
-        ball_vel_x, ball_vel_y = reset_ball()
+        # Controls
+        paddle_speed = 6
+        bot_speed = 4
+        bot2_speed = 5 
 
-        waiting = True
-        wait_start = pygame.time.get_ticks()
+        # screen = pygame.display.set_mode((800, 600))
 
-    if waiting:
-        if pygame.time.get_ticks() - wait_start >= 1000:
-            waiting = False
+        # maybe reduce the amount of "if"s used here
 
-    if not waiting:
-        ball.x += ball_vel_x
-        ball.y += ball_vel_y
+        keys = pygame.key.get_pressed()
 
-    if ball.colliderect(paddle):
-        if ball.centerx < paddle.centerx:
-            ball.right = paddle.left
-            ball_vel_x = -abs(ball_vel_x)
+        if gamemode == 1 or gamemode == 2:
+            if keys[pygame.K_w]: paddle.y -= paddle_speed
+            if keys[pygame.K_s]: paddle.y += paddle_speed
+            if keys[pygame.K_a]: paddle.x -= paddle_speed
+            if keys[pygame.K_d]: paddle.x += paddle_speed
 
-        else:
-            ball.left = paddle.right
-            ball_vel_x = abs(ball_vel_x)
+        paddle.clamp_ip(pygame.Rect(0, 0, 275, 600))
 
-        hit_pos = ball.centery - paddle.centery
-        ball_vel_y = hit_pos / 10
+        if gamemode == 1:
+            if keys[pygame.K_UP]: paddle2.y -= paddle_speed
+            if keys[pygame.K_DOWN]: paddle2.y += paddle_speed
+            if keys[pygame.K_LEFT]: paddle2.x -= paddle_speed
+            if keys[pygame.K_RIGHT]: paddle2.x += paddle_speed
 
-    if ball.colliderect(paddle2):
-        if ball.centerx < paddle2.centerx:
-            ball.right = paddle2.left
-            ball_vel_x = -abs(ball_vel_x)
+        elif gamemode == 2:
+            if ball.centery < paddle2.centery: paddle2.y -= bot_speed
+            if ball.centery > paddle2.centery: paddle2.y += bot_speed
 
-        else:
-            ball.left = paddle2.right
-            ball_vel_x = abs(ball_vel_x)
+        elif gamemode == 3:
+            if ball.centery < paddle.centery: paddle.y -= bot_speed
+            if ball.centery > paddle.centery: paddle.y += bot_speed
 
-        hit_pos = ball.centery - paddle2.centery
-        ball_vel_y = hit_pos / 10
+            if ball.centery < paddle2.centery: paddle2.y -= bot2_speed
+            if ball.centery > paddle2.centery: paddle2.y += bot2_speed  
+
+        paddle2.clamp_ip(pygame.Rect(525, 0, 275, 600))
+
+        # Borders
+        if ball.top <= 0 or ball.bottom >= 600:
+            ball_vel_y *= -1
+
+        # Crazy border checking
+
+        if ball.right <= 0:
+            p2points += 1
+            ball_vel_x, ball_vel_y = reset_ball()
+
+            waiting = True
+            wait_start = pygame.time.get_ticks()
+
+        if ball.left >= 800:
+            p1points += 1
+            ball_vel_x, ball_vel_y = reset_ball()
+
+            waiting = True
+            wait_start = pygame.time.get_ticks()
+
+        if waiting:
+            if pygame.time.get_ticks() - wait_start >= 1000:
+                waiting = False
+
+        if not waiting:
+            ball.x += ball_vel_x
+            ball.y += ball_vel_y
+
+        if ball.colliderect(paddle):
+            if ball.centerx < paddle.centerx:
+                ball.right = paddle.left
+                ball_vel_x = -abs(ball_vel_x)
+
+            else:
+                ball.left = paddle.right
+                ball_vel_x = abs(ball_vel_x)
+
+            hit_pos = ball.centery - paddle.centery
+            ball_vel_y = hit_pos / 10
+
+        if ball.colliderect(paddle2):
+            if ball.centerx < paddle2.centerx:
+                ball.right = paddle2.left
+                ball_vel_x = -abs(ball_vel_x)
+
+            else:
+                ball.left = paddle2.right
+                ball_vel_x = abs(ball_vel_x)
+
+            hit_pos = ball.centery - paddle2.centery
+            ball_vel_y = hit_pos / 10
 
     pygame.display.flip()
     screen_clock.tick(60)
