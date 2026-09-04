@@ -13,16 +13,15 @@ p2points = 0
 
 # if it works or not
 running = True
-
 waiting = False
 wait_start = 0
 
 # gamemode
 # as in, player vs player OR player vs bot
 gamemode = 0
-# 0 - player vs player
-# 1 - player vs bot
-# i doubt ill make bot vs bot
+# 1 - player vs player
+# 2 - player vs bot
+# 3 - i doubt ill make bot vs bot
 # for now itll be just using input() function for gamemode
 # i will maybe convert it into esp32 some screen?
 
@@ -135,18 +134,25 @@ while running:
 
     paddle.clamp_ip(pygame.Rect(0, 0, 275, 600))
 
-    # p2 movement
-    if keys[pygame.K_UP]:
-        paddle2.y -= paddle_speed
+    if gamemode != 2:
+        # p2 movement
+        if keys[pygame.K_UP]:
+            paddle2.y -= paddle_speed
 
-    if keys[pygame.K_DOWN]:
-        paddle2.y += paddle_speed
+        if keys[pygame.K_DOWN]:
+            paddle2.y += paddle_speed
 
-    if keys[pygame.K_LEFT]:
-        paddle2.x -= paddle_speed
+        if keys[pygame.K_LEFT]:
+            paddle2.x -= paddle_speed
 
-    if keys[pygame.K_RIGHT]:
-        paddle2.x += paddle_speed
+        if keys[pygame.K_RIGHT]:
+            paddle2.x += paddle_speed
+    else:
+        if ball.centery < paddle2.centery:
+            paddle2.y -= paddle_speed
+
+        if ball.centery > paddle2.centery:
+            paddle2.y += paddle_speed
 
     paddle2.clamp_ip(pygame.Rect(525, 0, 275, 600))
 
