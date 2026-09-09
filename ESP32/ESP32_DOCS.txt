@@ -1,0 +1,11 @@
+All important informations about my esp32 should be here
+
+ESP32: "ESP32-S3-DEV-KIT-N8R8 - development board WiFi + Bluetooth - without connectors - Waveshare 24363" (https://botland.store/img/cms/23341_6.jpg)
+OLED SCREEN: "1,3'' 128x64px I2C v2"
+LCD SCREEN: "LCD 2,4'' 240x320px - SPI - 65K RGB - do Raspberry Pi, Arduino, STM32 - Waveshare 18366"
+
+I won't be provoding links for jumper wires because you can get them at your local electronics store
+
+For both of these screens:
+- OLED: drivers -> sh1106.py (https://raw.githubusercontent.com/robert-hh/SH1106/refs/heads/master/sh1106.py) I think it was this one
+- LCD: drivers -> ili9341.py (https://github.com/rdagger/micropython-ili9341/blob/master/ili9341.py)
