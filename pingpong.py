@@ -1,3 +1,4 @@
+# imports
 import random
 import pygame
 
@@ -34,24 +35,35 @@ paddle2 = pygame.Rect(700, 200, 20, 100)
 # x, y, ball size, ball size
 ball = pygame.Rect(400, 300, 15, 15)
 
+def return_ball_vel():
+    x = random.choice([-4, 4])
+    y = random.choice([-2, -1, 1, 2])
+
+    return x, y
+
+ball_vel_x, ball_vel_y = return_ball_vel()
+
+ball_acceleration = 0.05
+ball_max_speed = 5
+
+ball_x = float(ball.x)
+ball_y = float(ball.y)
+
+
 # font for text
 font = pygame.font.Font(None, 30)
 menu_font = pygame.font.Font(None, 50)
 
-velocity_values = [-3, 3]
-
-ball_vel_x = random.choice(velocity_values)
-ball_vel_y = random.choice(velocity_values)
-
-# someone please count the amount of "if"s and "else"s in this file
-
 def reset_ball():
-    velocity_values = [-3, 3]
+    global ball_x, ball_y
 
-    ball.center = (400, 300)
-    ball_vel_x = random.choice(velocity_values)
-    ball_vel_y = random.choice(velocity_values)
+    ball_x = 400
+    ball_y = 300
 
+    ball.x = int(ball_x)
+    ball.y = int(ball_y)
+
+    ball_vel_x, ball_vel_y = return_ball_vel()
     return ball_vel_x, ball_vel_y
 
 def ball_velocity(ball, paddle, direction):
@@ -61,7 +73,6 @@ def ball_velocity(ball, paddle, direction):
     ball_speed = 5
 
     ball_vel_x = direction * ball_speed
-
     return ball_vel_x, ball_vel_y
 
 while running:
@@ -77,33 +88,31 @@ while running:
     screen.fill((0, 0, 0))
 
     if gamemode == 0:
-
         title = menu_font.render("PONG", True, (255, 255, 255))
-        pvp = font.render("1 - Player vs Player", True, (255, 255, 255))
-        pvai = font.render("2 - Player vs AI", True, (255, 255, 255))
-        aivai = font.render("3 - AI vs AI", True, (255, 255, 255))
-
         screen.blit(title, (350, 100))
+
+        pvp = font.render("1 - Player vs Player", True, (255, 255, 255))
         screen.blit(pvp, (300, 200))
+
+        pvai = font.render("2 - Player vs AI", True, (255, 255, 255))
         screen.blit(pvai, (300, 250))
+
+        aivai = font.render("3 - AI vs AI", True, (255, 255, 255))
         screen.blit(aivai, (300, 300))
     else:
 
         # Drawing section
-
         # Paddle 1      # Where  # R    G    B    # thing
         pygame.draw.rect(screen, (255, 255, 255), paddle)
-
         # Paddle 2
         pygame.draw.rect(screen, (255, 255, 255), paddle2)
-
         # Ball
         pygame.draw.rect(screen, (255, 255, 255), ball)
 
         p1 = font.render(f"P1: {p1points}", True, (255, 255, 255))
-        p2 = font.render(f"P2: {p2points}", True, (255, 255, 255))
-
         screen.blit(p1, (5, 10))
+
+        p2 = font.render(f"P2: {p2points}", True, (255, 255, 255))
         screen.blit(p2, (700, 10))
 
         # Controls
@@ -111,25 +120,19 @@ while running:
         bot_speed = 4
         bot2_speed = 5 
 
-        # screen = pygame.display.set_mode((800, 600))
-
-        # maybe reduce the amount of "if"s used here
-
         keys = pygame.key.get_pressed()
+
+        if keys[pygame.K_ESCAPE]: quit()
 
         if gamemode == 1 or gamemode == 2:
             if keys[pygame.K_w]: paddle.y -= paddle_speed
             if keys[pygame.K_s]: paddle.y += paddle_speed
-            if keys[pygame.K_a]: paddle.x -= paddle_speed
-            if keys[pygame.K_d]: paddle.x += paddle_speed
 
         paddle.clamp_ip(pygame.Rect(0, 0, 275, 600))
 
         if gamemode == 1:
             if keys[pygame.K_UP]: paddle2.y -= paddle_speed
             if keys[pygame.K_DOWN]: paddle2.y += paddle_speed
-            if keys[pygame.K_LEFT]: paddle2.x -= paddle_speed
-            if keys[pygame.K_RIGHT]: paddle2.x += paddle_speed
 
         elif gamemode == 2:
             if ball.centery < paddle2.centery: paddle2.y -= bot_speed
@@ -144,12 +147,7 @@ while running:
 
         paddle2.clamp_ip(pygame.Rect(525, 0, 275, 600))
 
-        # Borders
-        if ball.top <= 0 or ball.bottom >= 600:
-            ball_vel_y *= -1
-
         # Crazy border checking
-
         if ball.right <= 0:
             p2points += 1
             ball_vel_x, ball_vel_y = reset_ball()
@@ -169,32 +167,66 @@ while running:
                 waiting = False
 
         if not waiting:
-            ball.x += ball_vel_x
-            ball.y += ball_vel_y
+            # Prevents the ball from going through paddles
+            steps = max(1, int(max(abs(ball_vel_x), abs(ball_vel_y))))
 
-        if ball.colliderect(paddle):
-            if ball.centerx < paddle.centerx:
-                ball.right = paddle.left
-                ball_vel_x = -abs(ball_vel_x)
+            for _ in range(steps):
+                # Move the ball a small amount
+                ball_x += ball_vel_x / steps
+                ball_y += ball_vel_y / steps
 
-            else:
-                ball.left = paddle.right
-                ball_vel_x = abs(ball_vel_x)
+                ball.x = int(ball_x)
+                ball.y = int(ball_y)
 
-            hit_pos = ball.centery - paddle.centery
-            ball_vel_y = hit_pos / 10
+                if ball_y <= 0:
+                    ball_y = 0
+                    ball_vel_y = abs(ball_vel_y)
 
-        if ball.colliderect(paddle2):
-            if ball.centerx < paddle2.centerx:
-                ball.right = paddle2.left
-                ball_vel_x = -abs(ball_vel_x)
+                elif ball_y + ball.height >= 600:
+                    ball_y = 600 - ball.height
+                    ball_vel_y = -abs(ball_vel_y)
 
-            else:
-                ball.left = paddle2.right
-                ball_vel_x = abs(ball_vel_x)
+                if ball_vel_x < 0 and ball.colliderect(paddle):
 
-            hit_pos = ball.centery - paddle2.centery
-            ball_vel_y = hit_pos / 10
+                    ball_x = paddle.right
+                    ball_vel_x = abs(ball_vel_x)
+
+                    # -1 = very top
+                    #  0 = center
+                    # +1 = very bottom
+
+                    hit_pos = ((ball.centery - paddle.centery)/ (paddle.height / 2))
+
+                    ball_vel_y = hit_pos * 4
+
+                    # Prevent nearly-horizontal shots
+                    if abs(ball_vel_y) < 2:
+                        if ball_vel_y >= 0: ball_vel_y = 2
+                        else: ball_vel_y = -2
+
+                    ball_vel_x += ball_acceleration
+                    if ball_vel_x > ball_max_speed:
+                        ball_vel_x = ball_max_speed
+
+
+                if ball_vel_x > 0 and ball.colliderect(paddle2):
+                    ball_x = paddle2.left - ball.width
+                    ball_vel_x = -abs(ball_vel_x)
+
+                    hit_pos = ((ball.centery - paddle2.centery) / (paddle2.height / 2))
+
+                    ball_vel_y = hit_pos * 4
+
+                    if abs(ball_vel_y) < 2:
+                        if ball_vel_y >= 0: ball_vel_y = 2
+                        else: ball_vel_y = -2
+
+                    ball_vel_x -= ball_acceleration
+
+                    if abs(ball_vel_x) > ball_max_speed: ball_vel_x = -ball_max_speed
+
+                ball.x = int(ball_x)
+                ball.y = int(ball_y)
 
     pygame.display.flip()
     screen_clock.tick(60)

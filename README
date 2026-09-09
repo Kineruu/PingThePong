@@ -1,0 +1,20 @@
+# PING PONG
+
+Project made for me to practice using a Python game library called "Pygame",
+Additionally I want to move that project and put it onto esp32 as well, I bought one and I want to explore its limits
+
+As of right now, my current priority is "pingpong.py" file, any file related to esp32 in this repository might or will not work.
+
+# GAME
+
+You can move either with W and S or UP or DOWN arrow key.
+There are 3 different gamemodes:
+1) Player vs Player, you use your W and S key as well as UP and DOWN arrow keys. No, this is not multiplayer so it's best use for whenever someone is at your place.
+2) Player vs Bot, In case you would just want to play some very simple ping pong.
+3) Bot vs Bot, Made this just for fun, no real use in this one.
+
+# ISSUES
+
+If you catch any issue that is game-breaking, please make a Github issue.
+
+Last update README: 09/09/2026
