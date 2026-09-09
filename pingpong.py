@@ -197,7 +197,7 @@ while running:
 
                     hit_pos = ((ball.centery - paddle.centery)/ (paddle.height / 2))
 
-                    ball_vel_y = hit_pos * 4
+                    ball_vel_y = hit_pos * 4 + random.uniform(-0.5, 0.5)
 
                     # Prevent nearly-horizontal shots
                     if abs(ball_vel_y) < 2:
@@ -215,7 +215,7 @@ while running:
 
                     hit_pos = ((ball.centery - paddle2.centery) / (paddle2.height / 2))
 
-                    ball_vel_y = hit_pos * 4
+                    ball_vel_y = hit_pos * 4 + random.uniform(-0.5, 0.5)
 
                     if abs(ball_vel_y) < 2:
                         if ball_vel_y >= 0: ball_vel_y = 2

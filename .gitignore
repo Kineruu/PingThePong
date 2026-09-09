@@ -1,3 +1,4 @@
 .vscode
 .micropico
 sh1106.py
+__pycache__/
